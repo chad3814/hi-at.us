@@ -1,0 +1,15 @@
+{
+  "name": "hi-at.us",
+  "author": {
+    "name": "Chad Walker",
+    "email": "chad@chad-cat-lore-eddie.com"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express-graphql": "^0.12.0",
+    "expressjs": "^1.0.1",
+    "graphql": "^15.5.0"
+  }
+}
