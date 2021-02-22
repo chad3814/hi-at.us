@@ -27,8 +27,8 @@
               getLastEpisodeDt
             }
           `;
-          let last_episode_dt = {{last_episode_dt}};
-          let current_dt = {{current_dt}};
+          const vars = JSON.parse('{{vars}}');
+          let {last_episode_dt, current_dt} = vars;
           const current_interval_id = setInterval(() => current_dt += 1000, 1000);
           const last_ep_interval_id = setInterval(async () => {
             const res = await makeGraphqlQuery(GetLastEpisodeDt, {});
@@ -52,78 +52,80 @@
               };
           };
 
-          const fillOutSpans = () => {
-            const diff_ms = current_dt - last_episode_dt;
+          const stored_anniversaries = {};
+          const getHiatusAnniversaryDt = async function (years) {
+              if (stored_anniversaries[years]) {
+                return stored_anniversaries[years];
+              }
+              const res = await makeGraphqlQuery(GetHiatusAnniversary, {years});
+              stored_anniversaries[years] = res.data.getHiatusAnniversary;
+              return stored_anniversaries[years];
+          };
+
+          const fillOutSpans = (prefix, diff_ms) => {
             const {days, hours, minutes, seconds} = getBreakdown(diff_ms);
-            document.getElementById('days').innerText = days;
-            document.getElementById('hours').innerText = hours;
-            document.getElementById('minutes').innerText = minutes;
-            document.getElementById('seconds').innerText = seconds;
+            document.getElementById(prefix + 'days').innerText = days;
+            document.getElementById(prefix + 'hours').innerText = hours;
+            document.getElementById(prefix + 'minutes').innerText = minutes;
+            document.getElementById(prefix + 'seconds').innerText = seconds;
             if (days === 1) {
-              document.getElementById('days_str').innerText = 'day';
+              document.getElementById(prefix + 'days_str').innerText = 'day';
             } else {
-              document.getElementById('days_str').innerText = 'days';
+              document.getElementById(prefix + 'days_str').innerText = 'days';
             }
             if (hours === 1) {
-              document.getElementById('hours_str').innerText = 'hour';
+              document.getElementById(prefix + 'hours_str').innerText = 'hour';
             } else {
-              document.getElementById('hours_str').innerText = 'hours';
+              document.getElementById(prefix + 'hours_str').innerText = 'hours';
             }
             if (minutes === 1) {
-              document.getElementById('minutes_str').innerText = 'minute';
+              document.getElementById(prefix + 'minutes_str').innerText = 'minute';
             } else {
-              document.getElementById('minutes_str').innerText = 'minutes';
+              document.getElementById(prefix + 'minutes_str').innerText = 'minutes';
             }
             if (seconds === 1) {
-              document.getElementById('seconds_str').innerText = 'second';
+              document.getElementById(prefix + 'seconds_str').innerText = 'second';
             } else {
-              document.getElementById('seconds_str').innerText = 'seconds';
+              document.getElementById(prefix + 'seconds_str').innerText = 'seconds';
             }
           };
-          const updateAnniversary = async () => {
+          const update = async () => {
+            fillOutSpans('', current_dt - last_episode_dt);
             const years = parseInt(document.getElementById('anniversary').value, 10);
-            const res = await makeGraphqlQuery(GetHiatusAnniversary, {years});
-            const hiatus_anniversary = res.data.getHiatusAnniversary;
-
-            const diff_ms = hiatus_anniversary - current_dt;
-            const {days, hours, minutes, seconds} = getBreakdown(diff_ms);
-            document.getElementById('anv_days').innerText = days;
-            document.getElementById('anv_hours').innerText = hours;
-            document.getElementById('anv_minutes').innerText = minutes;
-            document.getElementById('anv_seconds').innerText = seconds;
-            if (days === 1) {
-              document.getElementById('anv_days_str').innerText = 'day';
-            } else {
-              document.getElementById('anv_days_str').innerText = 'days';
-            }
-            if (hours === 1) {
-              document.getElementById('anv_hours_str').innerText = 'hour';
-            } else {
-              document.getElementById('anv_hours_str').innerText = 'hours';
-            }
-            if (minutes === 1) {
-              document.getElementById('anv_minutes_str').innerText = 'minute';
-            } else {
-              document.getElementById('anv_minutes_str').innerText = 'minutes';
-            }
-            if (seconds === 1) {
-              document.getElementById('anv_seconds_str').innerText = 'second';
-            } else {
-              document.getElementById('anv_seconds_str').innerText = 'seconds';
-            }
+            const hiatus_anniversary_dt = await getHiatusAnniversaryDt(years);
+            fillOutSpans('anv_', hiatus_anniversary_dt - current_dt);
+            fillOutSpans('oned_', current_dt - vars.one_day_dt);
+            fillOutSpans('onem_', current_dt - vars.one_month_dt);
+            fillOutSpans('min_', current_dt - vars.min_dt);
+            fillOutSpans('max_', current_dt - vars.max_dt);
+            fillOutSpans('mean_', current_dt - vars.mean_dt);
+            fillOutSpans('med_', current_dt - vars.median_dt);
+            fillOutSpans('post_', current_dt - vars.reddit_post_dt);
           };
         </script>
     </head>
     <body>
         <h2>It has been <span id='days'></span> <span id='days_str'></span>, <span id='hours'></span> <span id='hours_str'></span>, <span id='minutes'></span> <span id='minutes_str'></span>, <span id='seconds'></span> <span id='seconds_str'></span> since the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
-        <h3>The <select id='anniversary' onchange='updateAnniversary()'>
+        <h2>It has been <span id='oned_days'></span> <span id='oned_days_str'></span>, <span id='oned_hours'></span> <span id='oned_hours_str'></span>, <span id='oned_minutes'></span> <span id='oned_minutes_str'></span>, <span id='oned_seconds'></span> <span id='oned_seconds_str'></span> since a day after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='onem_days'></span> <span id='onem_days_str'></span>, <span id='onem_hours'></span> <span id='onem_hours_str'></span>, <span id='onem_minutes'></span> <span id='onem_minutes_str'></span>, <span id='onem_seconds'></span> <span id='onem_seconds_str'></span> since a month after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='min_days'></span> <span id='min_days_str'></span>, <span id='min_hours'></span> <span id='min_hours_str'></span>, <span id='min_minutes'></span> <span id='min_minutes_str'></span>, <span id='min_seconds'></span> <span id='min_seconds_str'></span> since the minimum episode time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='max_days'></span> <span id='max_days_str'></span>, <span id='max_hours'></span> <span id='max_hours_str'></span>, <span id='max_minutes'></span> <span id='max_minutes_str'></span>, <span id='max_seconds'></span> <span id='max_seconds_str'></span> since the maximum time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='mean_days'></span> <span id='mean_days_str'></span>, <span id='mean_hours'></span> <span id='mean_hours_str'></span>, <span id='mean_minutes'></span> <span id='mean_minutes_str'></span>, <span id='mean_seconds'></span> <span id='mean_seconds_str'></span> since the mean time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='med_days'></span> <span id='med_days_str'></span>, <span id='med_hours'></span> <span id='med_hours_str'></span>, <span id='med_minutes'></span> <span id='med_minutes_str'></span>, <span id='med_seconds'></span> <span id='med_seconds_str'></span> since the median time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='post_days'></span> <span id='post_days_str'></span>, <span id='post_hours'></span> <span id='post_hours_str'></span>, <span id='post_minutes'></span> <span id='post_minutes_str'></span>, <span id='post_seconds'></span> <span id='post_seconds_str'></span> since Brady's reddit <a href='https://www.reddit.com/r/HelloInternet/comments/iq9ft5/a_short_blog_post_about_hiatus/' target='_blank'>post</a>.</h2>
+        <h2>The <select id='anniversary'>
             <option value=1>first</option>
             <option value=2>second</option>
             <option value=3>third</option>
             <option value=4>fourth</option>
             <option value=5>fifth</option>
+            <option value=6>sixth</option>
+            <option value=7>seventh</option>
+            <option value=8>eighth</option>
+            <option value=9>ninth</option>
+            <option value=10>tenth</option>
             </select> anniversary of the last pre-Hi-atus episode will be in <span id='anv_days'></span> <span id='anv_days_str'></span>, <span id='anv_hours'></span> <span id='anv_hours_str'></span>, <span id='anv_minutes'></span> <span id='anv_minutes_str'></span>, <span id='anv_seconds'></span> <span id='anv_seconds_str'></span>.
-        </h3>
-        <script>setInterval(() => fillOutSpans(), 500); updateAnniversary();</script>
+        </h2>
+        <script>setInterval(() => update(), 500); </script>
     </body>
 </html>
