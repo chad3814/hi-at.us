@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Is the HI-atus still on?</title>
+        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
         <script>
           const makeGraphqlQuery = async function (query, variables) {
             //const url = 'http://localhost:8000/graph';
@@ -114,9 +115,9 @@
           };
         </script>
     </head>
-    <body>
-        <h2>It has been <span id='days'></span> <span id='days_str'></span>, <span id='hours'></span> <span id='hours_str'></span>, <span id='minutes'></span> <span id='minutes_str'></span>, <span id='seconds'></span> <span id='seconds_str'></span> since the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
-        <h3>The <select id='anniversary' onchange='updateAnniversary()'>
+    <body class="text-white" style="background-color:#4E4E4E">
+        <h2 class="text-center mt-3 text-2xl">It has been <span id='days'></span> <span id='days_str'></span>, <span id='hours'></span> <span id='hours_str'></span>, <span id='minutes'></span> <span id='minutes_str'></span>, <span id='seconds'></span> <span id='seconds_str'></span> since the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h3 class="text-center mt-3 text-xl">The <select id='anniversary' onchange='updateAnniversary()' class="bg-black">
             <option value=1>first</option>
             <option value=2>second</option>
             <option value=3>third</option>
@@ -125,5 +126,5 @@
             </select> anniversary of the last pre-Hi-atus episode will be in <span id='anv_days'></span> <span id='anv_days_str'></span>, <span id='anv_hours'></span> <span id='anv_hours_str'></span>, <span id='anv_minutes'></span> <span id='anv_minutes_str'></span>, <span id='anv_seconds'></span> <span id='anv_seconds_str'></span>.
         </h3>
         <script>setInterval(() => fillOutSpans(), 500); updateAnniversary();</script>
-    </body>
+      </body>
 </html>
