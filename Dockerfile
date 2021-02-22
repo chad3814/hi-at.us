@@ -1,7 +1,6 @@
 FROM node:14
 
-VOLUME [ "/storage" ]
-COPY index.js /server
+COPY package.json yarn.lock LICENSE index.js index.html /server/
 RUN yarn --cwd /server
 
 CMD [ "node", "/server" ]

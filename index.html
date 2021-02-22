@@ -1,0 +1,129 @@
+<html>
+    <head>
+        <title>Is the HI-atus still on?</title>
+        <script>
+          const makeGraphqlQuery = async function (query, variables) {
+            //const url = 'http://localhost:8000/graph';
+            const url = 'https://hi-at.us/graph';
+            const headers = {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            };
+            const body = JSON.stringify({query, variables});
+            return await fetch(url, {headers, body, method: 'POST'}).then(r => r.json());
+          };
+          const GetCurrentDtQuery = `
+            query getCurrentDt {
+              getCurrentDt
+            }
+          `;
+          const GetHiatusAnniversary = `
+            query GetHiatusAnniversary($years: Int!) {
+              getHiatusAnniversary(years: $years)
+            }
+          `;
+          const GetLastEpisodeDt = `
+            query GetLastEpisodeDt {
+              getLastEpisodeDt
+            }
+          `;
+          let last_episode_dt = {{last_episode_dt}};
+          let current_dt = {{current_dt}};
+          const current_interval_id = setInterval(() => current_dt += 1000, 1000);
+          const last_ep_interval_id = setInterval(async () => {
+            const res = await makeGraphqlQuery(GetLastEpisodeDt, {});
+            last_episode_dt = res.data.getLastEpisodeDt;
+          }, 3000);
+
+          const getBreakdown = (diff_ms) => {
+              const total_seconds = Math.round(diff_ms / 1000);
+              const seconds = total_seconds % 60;
+              const total_minutes = Math.floor(total_seconds / 60);
+              const minutes = total_minutes % 60;
+              const total_hours = Math.floor(total_minutes / 60);
+              const hours = total_hours % 24;
+              const total_days = Math.floor(total_hours / 24);
+              const days = total_days;
+              return {
+                  days,
+                  hours,
+                  minutes,
+                  seconds,
+              };
+          };
+
+          const fillOutSpans = () => {
+            const diff_ms = current_dt - last_episode_dt;
+            const {days, hours, minutes, seconds} = getBreakdown(diff_ms);
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
+            if (days === 1) {
+              document.getElementById('days_str').innerText = 'day';
+            } else {
+              document.getElementById('days_str').innerText = 'days';
+            }
+            if (hours === 1) {
+              document.getElementById('hours_str').innerText = 'hour';
+            } else {
+              document.getElementById('hours_str').innerText = 'hours';
+            }
+            if (minutes === 1) {
+              document.getElementById('minutes_str').innerText = 'minute';
+            } else {
+              document.getElementById('minutes_str').innerText = 'minutes';
+            }
+            if (seconds === 1) {
+              document.getElementById('seconds_str').innerText = 'second';
+            } else {
+              document.getElementById('seconds_str').innerText = 'seconds';
+            }
+          };
+          const updateAnniversary = async () => {
+            const years = parseInt(document.getElementById('anniversary').value, 10);
+            const res = await makeGraphqlQuery(GetHiatusAnniversary, {years});
+            const hiatus_anniversary = res.data.getHiatusAnniversary;
+
+            const diff_ms = hiatus_anniversary - current_dt;
+            const {days, hours, minutes, seconds} = getBreakdown(diff_ms);
+            document.getElementById('anv_days').innerText = days;
+            document.getElementById('anv_hours').innerText = hours;
+            document.getElementById('anv_minutes').innerText = minutes;
+            document.getElementById('anv_seconds').innerText = seconds;
+            if (days === 1) {
+              document.getElementById('anv_days_str').innerText = 'day';
+            } else {
+              document.getElementById('anv_days_str').innerText = 'days';
+            }
+            if (hours === 1) {
+              document.getElementById('anv_hours_str').innerText = 'hour';
+            } else {
+              document.getElementById('anv_hours_str').innerText = 'hours';
+            }
+            if (minutes === 1) {
+              document.getElementById('anv_minutes_str').innerText = 'minute';
+            } else {
+              document.getElementById('anv_minutes_str').innerText = 'minutes';
+            }
+            if (seconds === 1) {
+              document.getElementById('anv_seconds_str').innerText = 'second';
+            } else {
+              document.getElementById('anv_seconds_str').innerText = 'seconds';
+            }
+          };
+        </script>
+    </head>
+    <body>
+        <h2>It has been <span id='days'></span> <span id='days_str'></span>, <span id='hours'></span> <span id='hours_str'></span>, <span id='minutes'></span> <span id='minutes_str'></span>, <span id='seconds'></span> <span id='seconds_str'></span> since the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h3>The <select id='anniversary' onchange='updateAnniversary()'>
+            <option value=1>first</option>
+            <option value=2>second</option>
+            <option value=3>third</option>
+            <option value=4>fourth</option>
+            <option value=5>fifth</option>
+            </select> anniversary of the last pre-Hi-atus episode will be in <span id='anv_days'></span> <span id='anv_days_str'></span>, <span id='anv_hours'></span> <span id='anv_hours_str'></span>, <span id='anv_minutes'></span> <span id='anv_minutes_str'></span>, <span id='anv_seconds'></span> <span id='anv_seconds_str'></span>.
+        </h3>
+        <script>setInterval(() => fillOutSpans(), 500); updateAnniversary();</script>
+    </body>
+</html>
