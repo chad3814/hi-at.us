@@ -61,7 +61,7 @@ app.use('/graph', graphqlHTTP({
 }));
 app.get('/', async (req, res, next) => {
   if (!template) {
-      template = await fs.readFile('./index.html', 'utf-8');
+      template = await fs.readFile(__dirname + '/index.html', 'utf-8');
   }
   const rss = await getRssFeed();
   const last_episode_dt = rss.items[0].publishOn;
