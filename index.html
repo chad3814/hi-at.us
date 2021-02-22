@@ -86,6 +86,13 @@
             const hiatus_anniversary = res.data.getHiatusAnniversary;
 
             const diff_ms = hiatus_anniversary - current_dt;
+            if (diff_ms >= 0) {
+              document.getElementById('will_or_was').innerText = 'will be in';
+            } else {
+              diff_ms = -diff_ms;
+              document.getElementById('will_or_was').innerText = 'was';
+              document.getElementById('ago').innerText = ' ago';
+            }
             const {days, hours, minutes, seconds} = getBreakdown(diff_ms);
             document.getElementById('anv_days').innerText = days;
             document.getElementById('anv_hours').innerText = hours;
@@ -122,7 +129,7 @@
             <option value=3>third</option>
             <option value=4>fourth</option>
             <option value=5>fifth</option>
-            </select> anniversary of the last pre-Hi-atus episode will be in <span id='anv_days'></span> <span id='anv_days_str'></span>, <span id='anv_hours'></span> <span id='anv_hours_str'></span>, <span id='anv_minutes'></span> <span id='anv_minutes_str'></span>, <span id='anv_seconds'></span> <span id='anv_seconds_str'></span>.
+            </select> anniversary of the last pre-Hi-atus episode <span id='will_or_was'></span> <span id='anv_days'></span> <span id='anv_days_str'></span>, <span id='anv_hours'></span> <span id='anv_hours_str'></span>, <span id='anv_minutes'></span> <span id='anv_minutes_str'></span>, <span id='anv_seconds'></span> <span id='anv_seconds_str'></span><span id='ago'></span>.
         </h3>
         <script>setInterval(() => fillOutSpans(), 500); updateAnniversary();</script>
     </body>
