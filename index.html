@@ -33,7 +33,7 @@
           const last_ep_interval_id = setInterval(async () => {
             const res = await makeGraphqlQuery(GetLastEpisodeDt, {});
             last_episode_dt = res.data.getLastEpisodeDt;
-          }, 3000);
+          }, 300000);
 
           const getBreakdown = (diff_ms) => {
               const total_seconds = Math.round(diff_ms / 1000);
