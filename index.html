@@ -27,6 +27,9 @@
             a:visited, a:active, a {
                 color: #AFAFAF;
             }
+            #min_type, #max_type, #mean_type, #med_type {
+              text-decoration: dashed underline;
+            }
         </style>
         <script>
           const makeGraphqlQuery = async function (query, variables) {
@@ -144,10 +147,10 @@
         <h2>It has been <span id='days'></span> <span id='days_str'></span>, <span id='hours'></span> <span id='hours_str'></span>, <span id='minutes'></span> <span id='minutes_str'></span>, <span id='seconds'></span> <span id='seconds_str'></span> since the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
         <h2>It has been <span id='oned_days'></span> <span id='oned_days_str'></span>, <span id='oned_hours'></span> <span id='oned_hours_str'></span>, <span id='oned_minutes'></span> <span id='oned_minutes_str'></span>, <span id='oned_seconds'></span> <span id='oned_seconds_str'></span> since a day after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
         <h2>It has been <span id='onem_days'></span> <span id='onem_days_str'></span>, <span id='onem_hours'></span> <span id='onem_hours_str'></span>, <span id='onem_minutes'></span> <span id='onem_minutes_str'></span>, <span id='onem_seconds'></span> <span id='onem_seconds_str'></span> since a month after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
-        <h2>It has been <span id='min_days'></span> <span id='min_days_str'></span>, <span id='min_hours'></span> <span id='min_hours_str'></span>, <span id='min_minutes'></span> <span id='min_minutes_str'></span>, <span id='min_seconds'></span> <span id='min_seconds_str'></span> since the minimum episode time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
-        <h2>It has been <span id='max_days'></span> <span id='max_days_str'></span>, <span id='max_hours'></span> <span id='max_hours_str'></span>, <span id='max_minutes'></span> <span id='max_minutes_str'></span>, <span id='max_seconds'></span> <span id='max_seconds_str'></span> since the maximum time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
-        <h2>It has been <span id='mean_days'></span> <span id='mean_days_str'></span>, <span id='mean_hours'></span> <span id='mean_hours_str'></span>, <span id='mean_minutes'></span> <span id='mean_minutes_str'></span>, <span id='mean_seconds'></span> <span id='mean_seconds_str'></span> since the mean time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
-        <h2>It has been <span id='med_days'></span> <span id='med_days_str'></span>, <span id='med_hours'></span> <span id='med_hours_str'></span>, <span id='med_minutes'></span> <span id='med_minutes_str'></span>, <span id='med_seconds'></span> <span id='med_seconds_str'></span> since the median time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='min_days'></span> <span id='min_days_str'></span>, <span id='min_hours'></span> <span id='min_hours_str'></span>, <span id='min_minutes'></span> <span id='min_minutes_str'></span>, <span id='min_seconds'></span> <span id='min_seconds_str'></span> since the <span id='min_type'>minimum</span> episode time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='max_days'></span> <span id='max_days_str'></span>, <span id='max_hours'></span> <span id='max_hours_str'></span>, <span id='max_minutes'></span> <span id='max_minutes_str'></span>, <span id='max_seconds'></span> <span id='max_seconds_str'></span> since the <span id='max_type'>maximum</span> time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='mean_days'></span> <span id='mean_days_str'></span>, <span id='mean_hours'></span> <span id='mean_hours_str'></span>, <span id='mean_minutes'></span> <span id='mean_minutes_str'></span>, <span id='mean_seconds'></span> <span id='mean_seconds_str'></span> since the <span id='mean_type'>mean</span> time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2>It has been <span id='med_days'></span> <span id='med_days_str'></span>, <span id='med_hours'></span> <span id='med_hours_str'></span>, <span id='med_minutes'></span> <span id='med_minutes_str'></span>, <span id='med_seconds'></span> <span id='med_seconds_str'></span> since the <span id='med_type'>median</span> time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
         <h2>It has been <span id='post_days'></span> <span id='post_days_str'></span>, <span id='post_hours'></span> <span id='post_hours_str'></span>, <span id='post_minutes'></span> <span id='post_minutes_str'></span>, <span id='post_seconds'></span> <span id='post_seconds_str'></span> since Brady's reddit <a href='https://www.reddit.com/r/HelloInternet/comments/iq9ft5/a_short_blog_post_about_hiatus/' target='_blank'>post</a>.</h2>
         <h2>The <select id='anniversary'>
             <option value=1>first</option>
@@ -162,6 +165,16 @@
             <option value=10>tenth</option>
             </select> anniversary of the last pre-Hi-atus episode <span id='anv_will_or_was'></span> <span id='anv_days'></span> <span id='anv_days_str'></span>, <span id='anv_hours'></span> <span id='anv_hours_str'></span>, <span id='anv_minutes'></span> <span id='anv_minutes_str'></span>, <span id='anv_seconds'></span> <span id='anv_seconds_str'></span><span id='anv_ago'></span>.
         </h2>
-        <script>setInterval(() => update(), 500); </script>
+        <script>
+          setInterval(() => update(), 500);
+          const min_bd = getBreakdown(vars.min_ms);
+          const max_bd = getBreakdown(vars.max_ms);
+          const mean_bd = getBreakdown(vars.mean_ms);
+          const median_bd = getBreakdown(vars.median_ms);
+          document.getElementById('min_type').title = `${min_bd.days}d${min_bd.hours}h${min_bd.minutes}m${min_bd.seconds}s`;
+          document.getElementById('max_type').title = `${max_bd.days}d${max_bd.hours}h${max_bd.minutes}m${max_bd.seconds}s`;
+          document.getElementById('mean_type').title = `${mean_bd.days}d${mean_bd.hours}h${mean_bd.minutes}m${mean_bd.seconds}s`;
+          document.getElementById('med_type').title = `${median_bd.days}d${median_bd.hours}h${median_bd.minutes}m${median_bd.seconds}s`;
+        </script>
     </body>
 </html>

@@ -14,7 +14,7 @@ const ONE_DAY = 24 * 60 * 60 * 1000;
 const ONE_YEAR = 365 * ONE_DAY;
 const HIATUS_EP = 1582884807028;
 
-let rss = null;
+let rss_items = null;
 const hiatus_start_times_dt = {one_day_dt: HIATUS_EP + ONE_DAY, one_month_dt: HIATUS_EP + 30 * ONE_DAY, reddit_post_dt: 1599763376330};
 const parseRssForTimes = function () {
     let min = Number.POSITIVE_INFINITY;
@@ -25,7 +25,7 @@ const parseRssForTimes = function () {
     let count = 0;
     const spans = new Map();
     let prev_dt;
-    for (const item of rss.items.slice().reverse()) {
+    for (const item of rss_items.slice().reverse()) {
         if (!prev_dt) {
             prev_dt = item.publishOn;
             continue;
@@ -57,24 +57,35 @@ const parseRssForTimes = function () {
     // median within a minute
     const diffs = [...spans.keys()].sort((a, b) => a - b);
     if (diffs.length % 2) {
-      const idx1 = Math.floor(diffs.length / 2);
-      const idx2 = Math.ceil(diffs.length / 2);
+      const idx1 = Math.ceil(diffs.length / 2);
+      hiatus_start_times_dt.median_dt = HIATUS_EP + 60000 * diffs[idx1];
+      hiatus_start_times_dt.median_ms = 60000 * diffs[idx1];
+    } else {
+      const idx1 = diffs.length / 2;
+      const idx2 = idx1 + 1;
       hiatus_start_times_dt.median_dt = HIATUS_EP + 30000 * (diffs[idx1] + diffs[idx2]);
       hiatus_start_times_dt.median_ms = 30000 * (diffs[idx1] + diffs[idx2]);
-    } else {
-      hiatus_start_times_dt.median_dt = HIATUS_EP + 60000 * diffs[diffs.length / 2];
-      hiatus_start_times_dt.median_ms = 60000 * diffs[diffs.length / 2];
     }
 };
 
 const getRssFeed = async function () {
-  if (rss) {
-    return rss;
+  if (rss_items) {
+    return rss_items;
   }
-  rss = await fetch(RSS_URL).then(r => r.json());
+  const items = [];
+  let offset = '';
+  let rss;
+  do {
+    rss = await fetch(RSS_URL + offset).then(r => r.json());
+    items.push(...rss.items);
+    if (rss.pagination.nextPage) {
+      offset = `&offset=${rss.pagination.nextPageOffset}`;
+    }
+  } while (rss.pagination.nextPage);
+  rss_items = items;
   parseRssForTimes();
-  setTimeout(() => {rss = null}, TWO_MINUTES);
-  return rss;
+  setTimeout(() => {rss_items = null}, TWO_MINUTES);
+  return items;
 };
 
 // Construct a schema, using GraphQL schema language
@@ -99,8 +110,8 @@ const root = {
     return HIATUS_EP + years_ms;
   },
   getLastEpisodeDt: async () => {
-    const rss = await getRssFeed();
-    return rss.items[0].publishOn;
+    const rss_items = await getRssFeed();
+    return rss_items[0].publishOn;
   },
 };  
 
@@ -116,8 +127,8 @@ app.get('/', async (req, res, next) => {
   if (!template) {
       template = await fs.readFile(__dirname + '/index.html', 'utf-8');
   }
-  const rss = await getRssFeed();
-  const vars = Object.assign({last_episode_dt: rss.items[0].publishOn, current_dt: Date.now()}, hiatus_start_times_dt);
+  const rss_items = await getRssFeed();
+  const vars = Object.assign({last_episode_dt: rss_items[0].publishOn, current_dt: Date.now()}, hiatus_start_times_dt);
   res.end(template.replace('{{vars}}', JSON.stringify(vars)))
   ;
 });
