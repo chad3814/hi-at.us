@@ -1,6 +1,33 @@
 <html>
     <head>
         <title>Is the HI-atus still on?</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                border-width: 0;
+                border-style: solid;
+                border-color: #e5e7eb;
+            }
+            body {
+                color: #FFFFFF;
+                background-color: #4E4E4E;
+            }
+            h2 {
+                text-align: center;
+                font-size: 1.5rem;
+                line-height: 2rem;
+                margin-top: 0.75rem;
+            }
+            select {
+                color: #DFDFDF;
+                background-color: #2E2E2E;
+                font-size: 1.5rem;
+                line-height: 2rem;
+            }
+            a:visited, a:active, a {
+                color: #AFAFAF;
+            }
+        </style>
         <script>
           const makeGraphqlQuery = async function (query, variables) {
             //const url = 'http://localhost:8000/graph';
@@ -114,7 +141,7 @@
         </script>
     </head>
     <body>
-        <h2>It has been <span id='days'></span> <span id='days_str'></span>, <span id='hours'></span> <span id='hours_str'></span>, <span id='minutes'></span> <span id='minutes_str'></span>, <span id='seconds'></span> <span id='seconds_str'></span> since the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
+        <h2class="text-center mt-3 text-2xl">It has been <span id='days'></span> <span id='days_str'></span>, <span id='hours'></span> <span id='hours_str'></span>, <span id='minutes'></span> <span id='minutes_str'></span>, <span id='seconds'></span> <span id='seconds_str'></span> since the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
         <h2>It has been <span id='oned_days'></span> <span id='oned_days_str'></span>, <span id='oned_hours'></span> <span id='oned_hours_str'></span>, <span id='oned_minutes'></span> <span id='oned_minutes_str'></span>, <span id='oned_seconds'></span> <span id='oned_seconds_str'></span> since a day after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
         <h2>It has been <span id='onem_days'></span> <span id='onem_days_str'></span>, <span id='onem_hours'></span> <span id='onem_hours_str'></span>, <span id='onem_minutes'></span> <span id='onem_minutes_str'></span>, <span id='onem_seconds'></span> <span id='onem_seconds_str'></span> since a month after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
         <h2>It has been <span id='min_days'></span> <span id='min_days_str'></span>, <span id='min_hours'></span> <span id='min_hours_str'></span>, <span id='min_minutes'></span> <span id='min_minutes_str'></span>, <span id='min_seconds'></span> <span id='min_seconds_str'></span> since the minimum episode time span after the last <a href='https://hellointernet.fm/' target='_blank'>HelloInternet</a> episode.</h2>
