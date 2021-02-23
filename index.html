@@ -63,7 +63,16 @@
           };
 
           const fillOutSpans = (prefix, diff_ms) => {
+            let in_past = false;
+            if (diff_ms < 0) {
+                diff_ms = -1 * diff_ms;
+                in_past = true;
+            }
             const {days, hours, minutes, seconds} = getBreakdown(diff_ms);
+            if (document.getElementById(prefix + 'will_or_was')) {
+                document.getElementById(prefix + 'will_or_was').innerText = in_past ? 'was' : 'will be in';
+                document.getElementById(prefix + 'ago').innerText = in_past ? ' ago' : '';
+            }
             document.getElementById(prefix + 'days').innerText = days;
             document.getElementById(prefix + 'hours').innerText = hours;
             document.getElementById(prefix + 'minutes').innerText = minutes;
@@ -124,7 +133,7 @@
             <option value=8>eighth</option>
             <option value=9>ninth</option>
             <option value=10>tenth</option>
-            </select> anniversary of the last pre-Hi-atus episode will be in <span id='anv_days'></span> <span id='anv_days_str'></span>, <span id='anv_hours'></span> <span id='anv_hours_str'></span>, <span id='anv_minutes'></span> <span id='anv_minutes_str'></span>, <span id='anv_seconds'></span> <span id='anv_seconds_str'></span>.
+            </select> anniversary of the last pre-Hi-atus episode <span id='anv_will_or_was'></span> <span id='anv_days'></span> <span id='anv_days_str'></span>, <span id='anv_hours'></span> <span id='anv_hours_str'></span>, <span id='anv_minutes'></span> <span id='anv_minutes_str'></span>, <span id='anv_seconds'></span> <span id='anv_seconds_str'></span><span id='anv_ago'></span>.
         </h2>
         <script>setInterval(() => update(), 500); </script>
     </body>
