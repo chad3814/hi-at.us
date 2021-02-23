@@ -57,11 +57,13 @@ const parseRssForTimes = function () {
     // median within a minute
     const diffs = [...spans.keys()].sort((a, b) => a - b);
     if (diffs.length % 2) {
-        hiatus_start_times_dt.median_dt = HIATUS_EP + 60000 * (diffs[Math.floor(diffs.length / 2)] + diffs[Math.ceil(diffs.length / 2)] / 2);
-        hiatus_start_times_dt.median_ms = 60000 * (diffs[Math.floor(diffs.length / 2)] + diffs[Math.ceil(diffs.length / 2)] / 2);
+      const idx1 = Math.floor(diffs.length / 2);
+      const idx2 = Math.ceil(diffs.length / 2);
+      hiatus_start_times_dt.median_dt = HIATUS_EP + 30000 * (diffs[idx1] + diffs[idx2]);
+      hiatus_start_times_dt.median_ms = 30000 * (diffs[idx1] + diffs[idx2]);
     } else {
-        hiatus_start_times_dt.median_dt = HIATUS_EP + 60000* diffs[diffs.length / 2];
-        hiatus_start_times_dt.median_ms = 60000 * diffs[diffs.length / 2];
+      hiatus_start_times_dt.median_dt = HIATUS_EP + 60000 * diffs[diffs.length / 2];
+      hiatus_start_times_dt.median_ms = 60000 * diffs[diffs.length / 2];
     }
 };
 
