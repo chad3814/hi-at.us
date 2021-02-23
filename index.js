@@ -25,7 +25,7 @@ const parseRssForTimes = function () {
     let count = 0;
     const spans = new Map();
     let prev_dt;
-    for (const item of rss.items) {
+    for (const item of rss.items.slice().reverse()) {
         if (!prev_dt) {
             prev_dt = item.publishOn;
             continue;
@@ -57,11 +57,11 @@ const parseRssForTimes = function () {
     // median within a minute
     const diffs = [...spans.keys()].sort((a, b) => a - b);
     if (diffs.length % 2) {
-        hiatus_start_times_dt.median_dt = HIATUS_EP + (diffs[Math.floor(diffs.length / 2)] + diffs[Math.ceil(diffs.length / 2)] / 2);
-        hiatus_start_times_dt.median_ms = (diffs[Math.floor(diffs.length / 2)] + diffs[Math.ceil(diffs.length / 2)] / 2);
+        hiatus_start_times_dt.median_dt = HIATUS_EP + 60000 * (diffs[Math.floor(diffs.length / 2)] + diffs[Math.ceil(diffs.length / 2)] / 2);
+        hiatus_start_times_dt.median_ms = 60000 * (diffs[Math.floor(diffs.length / 2)] + diffs[Math.ceil(diffs.length / 2)] / 2);
     } else {
-        hiatus_start_times_dt.median_dt = HIATUS_EP + diffs[diffs.length / 2];
-        hiatus_start_times_dt.median_ms = diffs[diffs.length / 2];
+        hiatus_start_times_dt.median_dt = HIATUS_EP + 60000* diffs[diffs.length / 2];
+        hiatus_start_times_dt.median_ms = 60000 * diffs[diffs.length / 2];
     }
 };
 
